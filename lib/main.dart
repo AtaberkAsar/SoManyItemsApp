@@ -1,0 +1,385 @@
+import 'package:botas/classifier.dart';
+import 'package:botas/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TOO MANU ITEMS APP',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: redColor,
+        primarySwatch: Colors.red,
+        textTheme: const TextTheme(
+          headline1: TextStyle(color: whiteColor, fontWeight: FontWeight.bold),
+          headline2: TextStyle(color: whiteColor, fontWeight: FontWeight.bold),
+          bodyText2: TextStyle(color: whiteColor, fontWeight: FontWeight.bold),
+          subtitle1: TextStyle(color: whiteColor, fontWeight: FontWeight.bold),
+        ),
+      ),
+      debugShowCheckedModeBanner: false,
+      home: const Home(),
+    );
+  }
+}
+
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final Classifier classifier = Classifier();
+  final picker = ImagePicker();
+  String _item = '';
+  String _itemProb = '';
+  String _item1 = '';
+  String _itemProb1 = '';
+  String _item2 = '';
+  String _itemProb2 = '';
+  String _item3 = '';
+  String _itemProb3 = '';
+  String _item4 = '';
+  String _itemProb4 = '';
+  var img;
+  final Widget starryBackground =
+      starGradient([whiteColor], darkBlueColor, 256);
+
+  bool _isLoading = false;
+  Image imShow = Image.asset(
+    'assets/logo.jpg',
+    fit: BoxFit.cover,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Lock screen orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    return PageView(
+      children: [
+        Scaffold(
+          backgroundColor: darkBlueColor,
+          body: _isLoading
+              ? Container(
+                  color: darkBlueColor,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: whiteColor,
+                    ),
+                  ),
+                )
+              : SafeArea(
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        height: size.height * 0.5,
+                        width: size.width,
+                        child: starryBackground,
+                      ),
+                      Positioned(
+                        height: size.height * 0.4,
+                        width: size.width,
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(size.width * 0.05),
+                            child: SizedBox(
+                              height: size.height * 0.35,
+                              width: size.height * 0.35,
+                              child: imShow,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: size.height * 0.4,
+                        height: size.height * 0.6,
+                        width: size.width,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: redColor,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(42),
+                              topRight: Radius.circular(42),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: size.height * 0.05,
+                              ),
+                              Text(
+                                'Predictions',
+                                style: TextStyle(
+                                  fontSize: size.height * 0.05,
+                                  fontFamily: 'times new roman',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: size.height * 0.01,
+                              ),
+                              _item == ''
+                                  ? SizedBox(
+                                      height: size.height * 0.185,
+                                      child: Text(
+                                        'Select an image',
+                                        style: TextStyle(
+                                          fontSize: size.height * 0.025,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    )
+                                  : Column(
+                                      children: [
+                                        Text(
+                                          '$_itemProb% $_item',
+                                          style: TextStyle(
+                                            fontSize: size.height * 0.025,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: size.height * 0.01,
+                                        ),
+                                        Text(
+                                          '$_itemProb1% $_item1',
+                                          style: TextStyle(
+                                            fontSize: size.height * 0.025,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: size.height * 0.01,
+                                        ),
+                                        Text(
+                                          '$_itemProb2% $_item2',
+                                          style: TextStyle(
+                                            fontSize: size.height * 0.025,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: size.height * 0.01,
+                                        ),
+                                        Text(
+                                          '$_itemProb3% $_item3',
+                                          style: TextStyle(
+                                            fontSize: size.height * 0.025,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: size.height * 0.01,
+                                        ),
+                                        Text(
+                                          '$_itemProb4% $_item4',
+                                          style: TextStyle(
+                                            fontSize: size.height * 0.025,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                              SizedBox(
+                                height: size.height * 0.05,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  SizedBox(
+                                    width: size.width * 0.3,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        img = await picker.pickImage(
+                                          source: ImageSource.gallery,
+                                          maxHeight: 224,
+                                          maxWidth: 224,
+                                          imageQuality: 100,
+                                        );
+                                        if (img == null) {
+                                          setState(() {
+                                            imShow = Image.asset(
+                                              'assets/logo.jpg',
+                                              fit: BoxFit.cover,
+                                            );
+                                            _item = '';
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
+                                          final outputs =
+                                              await classifier.classify(img);
+                                          setState(() {
+                                            imShow = Image.file(
+                                              File(img.path),
+                                              fit: BoxFit.cover,
+                                            );
+                                            _item = outputs[0]
+                                                as String; // dictionary[outputs[0]]
+                                            _itemProb = outputs[1];
+                                            _item1 = outputs[2]
+                                                as String; // dictionary[outputs[2]]
+                                            _itemProb1 = outputs[3];
+                                            _item2 = outputs[4]
+                                                as String; // dictionary[outputs[4]]
+                                            _itemProb2 = outputs[5];
+                                            _item3 = outputs[6]
+                                                as String; // dictionary[outputs[6]]
+                                            _itemProb3 = outputs[7];
+                                            _item4 = outputs[8]
+                                                as String; // dictionary[outputs[8]]
+                                            _itemProb4 = outputs[9];
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 8,
+                                      ),
+                                      child: Icon(
+                                        Icons.photo_outlined,
+                                        color: whiteColor,
+                                        size: size.height * 0.1,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.3,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        img = await picker.pickImage(
+                                          source: ImageSource.camera,
+                                          maxHeight: 224,
+                                          maxWidth: 224,
+                                          imageQuality: 100,
+                                        );
+                                        if (img == null) {
+                                          setState(() {
+                                            imShow = Image.asset(
+                                              'assets/logo.jpg',
+                                              fit: BoxFit.cover,
+                                            );
+                                            _item = '';
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
+                                          final outputs =
+                                              await classifier.classify(img);
+                                          setState(() {
+                                            imShow = Image.file(
+                                              File(img.path),
+                                              fit: BoxFit.cover,
+                                            );
+                                            _item = outputs[0]
+                                                as String; // dictionary[outputs[0]]
+                                            _itemProb = outputs[1];
+                                            _item1 = outputs[2]
+                                                as String; // dictionary[outputs[2]]
+                                            _itemProb1 = outputs[3];
+                                            _item2 = outputs[4]
+                                                as String; // dictionary[outputs[4]]
+                                            _itemProb2 = outputs[5];
+                                            _item3 = outputs[6]
+                                                as String; // dictionary[outputs[6]]
+                                            _itemProb3 = outputs[7];
+                                            _item4 = outputs[8]
+                                                as String; // dictionary[outputs[8]]
+                                            _itemProb4 = outputs[9];
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 8,
+                                      ),
+                                      child: Icon(
+                                        Icons.camera_alt_outlined,
+                                        color: whiteColor,
+                                        size: size.height * 0.1,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+        Scaffold(
+          backgroundColor: darkBlueColor,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                starGradient([whiteColor, lightBlueColor], darkBlueColor, 300),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Ataberk ASAR\n',
+                      style: TextStyle(
+                        fontSize: size.height * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      'Hacettepe University\nComputer Engineering\n',
+                      style: TextStyle(
+                        fontSize: size.height * 0.045,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      'BOTAŞ\nSUMMER INTERNSHIP\n2022',
+                      style: TextStyle(
+                        fontSize: size.height * 0.04,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
