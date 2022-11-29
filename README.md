@@ -1,16 +1,16 @@
-# botas
+![Logo](https://github.com/AtaberkAsar/SoManyItemsApp/blob/main/assets/logo.jpg?raw=true)
 
-Inventory Management System for BOTAS
+# SO MANY ITEMS
 
-## Getting Started
+## Inventory Management System Mobile Application with Image Classification
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+![HomePage](https://github.com/AtaberkAsar/SoManyItemsApp/blob/main/assets/home.png?raw=true)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- EfficientNetB0 trained on custom dataset to classify given image data
+  - [Labels](https://github.com/AtaberkAsar/SoManyItemsApp/blob/main/assets/labels.txt)
+- Model trained with Tensorflow
+- Gallery or Camera can be used as image source
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![SamplePrediction](https://github.com/AtaberkAsar/SoManyItemsApp/blob/main/assets/prediction.png?raw=true)
