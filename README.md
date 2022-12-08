@@ -6,8 +6,6 @@
 
 ## Inventory Management System Mobile Application with Image Classification
 
----
-
 <p align = "center">
 <img src="https://github.com/AtaberkAsar/SoManyItemsApp/blob/main/assets/home.png?raw=true" width="200" height="424"/>
 </p>
